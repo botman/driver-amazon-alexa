@@ -1,0 +1,42 @@
+{
+    "name": "botman/driver-amazon-alexa",
+    "license": "MIT",
+    "description": "Amazon Alexa driver for BotMan",
+    "keywords": [
+        "Bot",
+        "BotMan",
+        "Amazon Alexa",
+        "Alexa"
+    ],
+    "homepage": "http://github.com/botman/driver-amazon-alexa",
+    "authors": [
+        {
+            "name": "Marcel Pociot",
+            "email": "m.pociot@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "botman/botman": "~2.0",
+        "minicodemonkey/amazon-alexa-php": "^0.1.5"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.0",
+        "mockery/mockery": "dev-master",
+        "ext-curl": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "BotMan\\Drivers\\AmazonAlexa\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "cs": "php-cs-fixer fix"
+    }
+}
