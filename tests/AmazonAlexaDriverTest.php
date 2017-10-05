@@ -7,10 +7,11 @@ use BotMan\BotMan\Http\Curl;
 use PHPUnit_Framework_TestCase;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use Symfony\Component\HttpFoundation\Request;
+use BotMan\BotMan\Drivers\Events\GenericEvent;
+use Symfony\Component\HttpFoundation\Response;
 use BotMan\Drivers\AmazonAlexa\AmazonAlexaDriver;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
-use Symfony\Component\HttpFoundation\Response;
 
 class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
 {
@@ -26,7 +27,7 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
         return new AmazonAlexaDriver($request, [], $htmlInterface);
     }
 
-    private function getValidDriver($htmlInterface = null)
+    private function getValidDriver($htmlInterface = null, $type = 'IntentRequest')
     {
         $responseData = '{
   "session": {
@@ -41,7 +42,7 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
     }
   },
   "request": {
-    "type": "IntentRequest",
+    "type": "'.$type.'",
     "requestId": "request_id",
     "intent": {
       "name": "intent_name",
@@ -191,6 +192,25 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
         /** @var Response $response */
         $response = $driver->sendPayload($payload);
         $this->assertSame('{"version":"1.0","sessionAttributes":[],"response":{"outputSpeech":{"type":"PlainText","text":"string"},"card":null,"reprompt":null,"shouldEndSession":false}}', $response->getContent());
+    }
+
+    /** @test */
+    public function it_fires_launch_event()
+    {
+        $driver = $this->getValidDriver(null, AmazonAlexaDriver::LAUNCH_REQUEST);
+
+        $event = $driver->hasMatchingEvent();
+
+        $this->assertInstanceOf(GenericEvent::class, $event);
+        $this->assertSame(AmazonAlexaDriver::LAUNCH_REQUEST, $event->getName());
+    }
+
+    /** @test */
+    public function it_no_events_for_regular_messages()
+    {
+        $driver = $this->getValidDriver();
+
+        $this->assertFalse($driver->hasMatchingEvent());
     }
 
     /** @test */
