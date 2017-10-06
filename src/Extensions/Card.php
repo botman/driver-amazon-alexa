@@ -108,7 +108,7 @@ class Card extends Attachment
     {
         $this->image = [
             'smallImageUrl' => $small ?? $large,
-            'largeImageUrl' => $large
+            'largeImageUrl' => $large,
         ];
 
         return $this;
