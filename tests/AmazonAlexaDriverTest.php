@@ -18,7 +18,7 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
     private function getDriver($responseData, $htmlInterface = null)
     {
         $request = Request::create('', 'POST', [], [], [], [
-            'Content-Type: application/json'
+            'Content-Type: application/json',
         ], $responseData);
         if ($htmlInterface === null) {
             $htmlInterface = m::mock(Curl::class);
