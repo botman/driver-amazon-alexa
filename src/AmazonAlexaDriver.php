@@ -20,7 +20,7 @@ class AmazonAlexaDriver extends HttpDriver
 {
     const DRIVER_NAME = 'AmazonAlexa';
     const LAUNCH_REQUEST = 'LaunchRequest';
-	const SESSION_ENDED_REQUEST = 'SessionEndedRequest';
+    const SESSION_ENDED_REQUEST = 'SessionEndedRequest';
 
     protected $messages = [];
 
@@ -54,7 +54,7 @@ class AmazonAlexaDriver extends HttpDriver
     }
 
     /**
-     * @param  IncomingMessage $message
+     * @param  IncomingMessage $messag
      * @return \BotMan\BotMan\Messages\Incoming\Answer
      */
     public function getConversationAnswer(IncomingMessage $message)
@@ -88,7 +88,7 @@ class AmazonAlexaDriver extends HttpDriver
     public function hasMatchingEvent()
     {
         $type = $this->event->get('type');
-        if ($type === self::LAUNCH_REQUEST ||  $type === self::SESSION_ENDED_REQUEST) {
+        if ($type === self::LAUNCH_REQUEST || $type === self::SESSION_ENDED_REQUEST) {
             $event = new GenericEvent($this->event);
             $event->setName($type);
 
