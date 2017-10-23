@@ -74,7 +74,7 @@ class AmazonAlexaDriver extends HttpDriver
             $session = $this->payload->get('session');
 
             $message = new IncomingMessage($intent['name'], $session['user']['userId'], $session['sessionId']);
-            if (!is_null($intent) && array_key_exists('slots', $intent)) {
+            if (! is_null($intent) && array_key_exists('slots', $intent)) {
                 $message->addExtras('slots', Collection::make($intent['slots']));
             }
             $this->messages = [$message];
