@@ -54,7 +54,7 @@ class AmazonAlexaDriver extends HttpDriver
     }
 
     /**
-     * @param  IncomingMessage $messag
+     * @param  IncomingMessage $message
      * @return \BotMan\BotMan\Messages\Incoming\Answer
      */
     public function getConversationAnswer(IncomingMessage $message)
