@@ -143,6 +143,7 @@ class AmazonAlexaDriver extends HttpDriver
         $response = new AlexaResponse();
         $response->respond($payload['text']);
         $response->card = $payload['card'] ?? null;
+        $response->shouldEndSession = $payload['shouldEndSession'] ?? false;
 
         return Response::create(json_encode($response->render()))->send();
     }
