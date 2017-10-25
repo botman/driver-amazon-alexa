@@ -20,6 +20,7 @@ class AmazonAlexaDriver extends HttpDriver
 {
     const DRIVER_NAME = 'AmazonAlexa';
     const LAUNCH_REQUEST = 'LaunchRequest';
+    const SESSION_ENDED_REQUEST = 'SessionEndedRequest';
 
     protected $messages = [];
 
@@ -73,8 +74,9 @@ class AmazonAlexaDriver extends HttpDriver
             $session = $this->payload->get('session');
 
             $message = new IncomingMessage($intent['name'], $session['user']['userId'], $session['sessionId']);
-            $message->addExtras('slots', Collection::make($intent['slots']));
-
+            if (! is_null($intent) && array_key_exists('slots', $intent)) {
+                $message->addExtras('slots', Collection::make($intent['slots']));
+            }
             $this->messages = [$message];
         }
 
@@ -87,7 +89,7 @@ class AmazonAlexaDriver extends HttpDriver
     public function hasMatchingEvent()
     {
         $type = $this->event->get('type');
-        if ($type === self::LAUNCH_REQUEST) {
+        if ($type === self::LAUNCH_REQUEST || $type === self::SESSION_ENDED_REQUEST) {
             $event = new GenericEvent($this->event);
             $event->setName($type);
 
@@ -141,6 +143,7 @@ class AmazonAlexaDriver extends HttpDriver
         $response = new AlexaResponse();
         $response->respond($payload['text']);
         $response->card = $payload['card'] ?? null;
+        $response->shouldEndSession = $payload['shouldEndSession'] ?? false;
 
         return Response::create(json_encode($response->render()))->send();
     }
