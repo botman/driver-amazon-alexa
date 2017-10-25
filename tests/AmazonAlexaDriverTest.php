@@ -206,6 +206,17 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function it_fires_session_ended_event()
+    {
+        $driver = $this->getValidDriver(null, AmazonAlexaDriver::SESSION_ENDED_REQUEST);
+
+        $event = $driver->hasMatchingEvent();
+
+        $this->assertInstanceOf(GenericEvent::class, $event);
+        $this->assertSame(AmazonAlexaDriver::SESSION_ENDED_REQUEST, $event->getName());
+    }
+
+    /** @test */
     public function it_no_events_for_regular_messages()
     {
         $driver = $this->getValidDriver();
