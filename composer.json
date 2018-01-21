@@ -21,6 +21,8 @@
         "minicodemonkey/amazon-alexa-php": "^0.1.5"
     },
     "require-dev": {
+        "botman/studio-addons": "~1.0",
+        "illuminate/contracts": "~5.5.0",
         "phpunit/phpunit": "~5.0",
         "mockery/mockery": "dev-master",
         "ext-curl": "*"
@@ -38,5 +40,12 @@
     "scripts": {
         "test": "vendor/bin/phpunit",
         "cs": "php-cs-fixer fix"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "BotMan\\Drivers\\AmazonAlexa\\Providers\\AmazonAlexaServiceProvider"
+            ]
+        }
     }
 }
