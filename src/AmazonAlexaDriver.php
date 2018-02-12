@@ -5,8 +5,8 @@ namespace BotMan\Drivers\AmazonAlexa;
 use BotMan\BotMan\Users\User;
 use Illuminate\Support\Collection;
 use BotMan\BotMan\Drivers\HttpDriver;
+use Techworker\Ssml\ContainerElement;
 use BotMan\BotMan\Messages\Incoming\Answer;
-use Alexa\Response\Response as AlexaResponse;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use Symfony\Component\HttpFoundation\Request;
 use BotMan\BotMan\Drivers\Events\GenericEvent;
@@ -141,7 +141,11 @@ class AmazonAlexaDriver extends HttpDriver
     public function sendPayload($payload)
     {
         $response = new AlexaResponse();
-        $response->respond($payload['text']);
+        if (is_string($payload['text'])) {
+            $response->respondText($payload['text']);
+        } elseif ($payload['text'] instanceof ContainerElement) {
+            $response->respondSsml($payload['text']);
+        }
         $response->card = $payload['card'] ?? null;
         $response->shouldEndSession = $payload['shouldEndSession'] ?? false;
 

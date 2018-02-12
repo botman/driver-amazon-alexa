@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use BotMan\Drivers\AmazonAlexa\AmazonAlexaDriver;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
+use Techworker\Ssml\Element\Audio;
+use Techworker\Ssml\SsmlBuilder;
 
 class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
 {
@@ -178,10 +180,33 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
         $this->assertSame([
             'text' => 'question object',
         ], $payload);
+
+        $message = SsmlBuilder::factory()->text('This is SSML!');
+        $payload = $driver->buildServicePayload($message, $incomingMessage);
+
+        $this->assertSame([
+            'text' => $message
+        ], $payload);
     }
 
     /** @test */
     public function it_can_send_payload()
+    {
+        $driver = $this->getValidDriver();
+
+        $ssml = SsmlBuilder::factory();
+        $ssml->text('This is SSML!')->audio('foo')->up()->text('more Text');
+        $payload = [
+            'text' => $ssml,
+        ];
+
+        /** @var Response $response */
+        $response = $driver->sendPayload($payload);
+        $this->assertSame('{"version":"1.0","sessionAttributes":[],"response":{"outputSpeech":{"type":"SSML","ssml":"<speak>This is SSML!<audio src=\"foo\"\/>more Text<\/speak>"},"card":null,"reprompt":null,"shouldEndSession":false}}', $response->getContent());
+    }
+
+    /** @test */
+    public function it_can_send_ssml_payload()
     {
         $driver = $this->getValidDriver();
 
