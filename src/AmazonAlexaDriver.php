@@ -3,6 +3,7 @@
 namespace BotMan\Drivers\AmazonAlexa;
 
 use BotMan\BotMan\Users\User;
+use BotMan\Drivers\AmazonAlexa\Extensions\Directives;
 use Illuminate\Support\Collection;
 use BotMan\BotMan\Drivers\HttpDriver;
 use Techworker\Ssml\ContainerElement;
@@ -125,6 +126,9 @@ class AmazonAlexaDriver extends HttpDriver
             if ($attachment instanceof Card) {
                 $parameters['card'] = $attachment;
             }
+            if ($attachment instanceof Directives) {
+                $parameters['directives'] = $attachment;
+            }
         } else {
             $text = $message;
         }
@@ -147,6 +151,7 @@ class AmazonAlexaDriver extends HttpDriver
             $response->respondSsml($payload['text']);
         }
         $response->card = $payload['card'] ?? null;
+        $response->directives = $payload['directives'] ?? null;
         $response->shouldEndSession = $payload['shouldEndSession'] ?? false;
 
         return Response::create(json_encode($response->render()))->send();
