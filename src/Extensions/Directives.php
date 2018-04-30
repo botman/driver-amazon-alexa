@@ -20,15 +20,13 @@ class Directives extends Attachment
     protected $playBehaviour = self::DEFAULT_PLAY_BEHAVIOUR_TYPE;
     protected $audioItem;
 
-    public static function create($type, $playBehaviour)
+    public static function create()
     {
-        return new self($type, $playBehaviour);
+        return new self();
     }
 
-    public function __construct($type, $playBehaviour)
+    public function __construct()
     {
-        $this->type = $type;
-        $this->playBehaviour = $playBehaviour;
         $this->audioItem = new Stream;
     }
 
@@ -61,7 +59,7 @@ class Directives extends Attachment
         $this->audioItem->url($url);
     }
 
-    public function setToken($token)
+    public function token($token)
     {
         $this->audioItem->token($token);
     }
@@ -88,9 +86,9 @@ class Directives extends Attachment
                 'type' => $this->type,
                 'playBehavior' => $this->playBehaviour,
                 'audioItem' => [
-                    'stream' => $this->audioItem->renderStream()
-                ]
-            ]
+                    'stream' => $this->audioItem->renderStream(),
+                ],
+            ],
         ]);
     }
 }

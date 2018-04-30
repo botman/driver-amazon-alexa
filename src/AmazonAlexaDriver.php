@@ -3,7 +3,6 @@
 namespace BotMan\Drivers\AmazonAlexa;
 
 use BotMan\BotMan\Users\User;
-use BotMan\Drivers\AmazonAlexa\Extensions\Directives;
 use Illuminate\Support\Collection;
 use BotMan\BotMan\Drivers\HttpDriver;
 use Techworker\Ssml\ContainerElement;
@@ -16,6 +15,7 @@ use BotMan\Drivers\AmazonAlexa\Extensions\Card;
 use BotMan\BotMan\Interfaces\DriverEventInterface;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
+use BotMan\Drivers\AmazonAlexa\Extensions\Directives;
 
 class AmazonAlexaDriver extends HttpDriver
 {

@@ -4,19 +4,22 @@ namespace BotMan\Drivers\AmazonAlexa\Extensions;
 
 class Stream
 {
+    const DEFAULT_OFFSET_IN_MILLISECONDS = 0;
+
     protected $url;
     protected $token;
     protected $expectedPreviousToken;
-    protected $offsetInMilliseconds;
+    protected $offsetInMilliseconds = self::DEFAULT_OFFSET_IN_MILLISECONDS;
 
-    public function url($url) {
+    public function url($url)
+    {
         $this->url = $url;
 
         return $this;
     }
 
-    public function getUrl() {
-
+    public function getUrl()
+    {
         return $this->url;
     }
 
@@ -62,7 +65,7 @@ class Stream
             'url' => $this->url,
             'token' => $this->token,
             'expectedPreviousToken' => $this->expectedPreviousToken,
-            'offsetInMilliseconds' => $this->offsetInMilliseconds
+            'offsetInMilliseconds' => $this->offsetInMilliseconds,
         ];
     }
 }
