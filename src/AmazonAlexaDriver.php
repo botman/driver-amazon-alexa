@@ -172,4 +172,27 @@ class AmazonAlexaDriver extends HttpDriver
     {
         //
     }
+
+    
+
+    public function dialogDelegate()
+    {
+        $response = [
+            'version' => '1.0',
+            'sessionAttributes' => [],
+            'response' => [
+                    'outputSpeech' => null,
+                    'card' => null,
+                    'directives' => [
+                        [
+                            'type' => 'Dialog.Delegate'
+                        ]
+                    ],
+                    'reprompt' => null,
+                    'shouldEndSession' => false,
+            ]
+        ];
+
+        return Response::create(json_encode($response))->send();
+    }
 }
