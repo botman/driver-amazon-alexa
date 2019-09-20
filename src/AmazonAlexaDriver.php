@@ -2,19 +2,19 @@
 
 namespace BotMan\Drivers\AmazonAlexa;
 
-use BotMan\BotMan\Users\User;
-use Illuminate\Support\Collection;
-use BotMan\BotMan\Drivers\HttpDriver;
-use Techworker\Ssml\ContainerElement;
-use BotMan\BotMan\Messages\Incoming\Answer;
-use BotMan\BotMan\Messages\Outgoing\Question;
-use Symfony\Component\HttpFoundation\Request;
 use BotMan\BotMan\Drivers\Events\GenericEvent;
-use Symfony\Component\HttpFoundation\Response;
-use BotMan\Drivers\AmazonAlexa\Extensions\Card;
+use BotMan\BotMan\Drivers\HttpDriver;
 use BotMan\BotMan\Interfaces\DriverEventInterface;
+use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
+use BotMan\BotMan\Messages\Outgoing\Question;
+use BotMan\BotMan\Users\User;
+use BotMan\Drivers\AmazonAlexa\Extensions\Card;
+use Illuminate\Support\Collection;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Techworker\Ssml\ContainerElement;
 
 class AmazonAlexaDriver extends HttpDriver
 {
@@ -111,7 +111,7 @@ class AmazonAlexaDriver extends HttpDriver
      * @param string|Question|IncomingMessage $message
      * @param IncomingMessage $matchingMessage
      * @param array $additionalParameters
-     * @return Response
+     * @return array
      */
     public function buildServicePayload($message, $matchingMessage, $additionalParameters = [])
     {
@@ -136,7 +136,7 @@ class AmazonAlexaDriver extends HttpDriver
 
     /**
      * @param mixed $payload
-     * @return Response
+     * @return JsonResponse
      */
     public function sendPayload($payload)
     {
@@ -149,7 +149,7 @@ class AmazonAlexaDriver extends HttpDriver
         $response->card = $payload['card'] ?? null;
         $response->shouldEndSession = $payload['shouldEndSession'] ?? false;
 
-        return Response::create(json_encode($response->render()))->send();
+        return JsonResponse::create($response->render())->send();
     }
 
     /**
@@ -166,33 +166,34 @@ class AmazonAlexaDriver extends HttpDriver
      * @param string $endpoint
      * @param array $parameters
      * @param IncomingMessage $matchingMessage
-     * @return Response
+     * @return JsonResponse
      */
     public function sendRequest($endpoint, array $parameters, IncomingMessage $matchingMessage)
     {
         //
     }
 
-    
-
+    /**
+     * @return JsonResponse
+     */
     public function dialogDelegate()
     {
         $response = [
             'version' => '1.0',
             'sessionAttributes' => [],
             'response' => [
-                    'outputSpeech' => null,
-                    'card' => null,
-                    'directives' => [
-                        [
-                            'type' => 'Dialog.Delegate'
-                        ]
-                    ],
-                    'reprompt' => null,
-                    'shouldEndSession' => false,
+                'outputSpeech' => null,
+                'card' => null,
+                'directives' => [
+                    [
+                        'type' => 'Dialog.Delegate'
+                    ]
+                ],
+                'reprompt' => null,
+                'shouldEndSession' => false,
             ]
         ];
 
-        return Response::create(json_encode($response))->send();
+        return JsonResponse::create($response)->send();
     }
 }
