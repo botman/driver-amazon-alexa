@@ -4,7 +4,8 @@ namespace BotMan\Drivers\AmazonAlexa;
 
 use Illuminate\Support\Collection;
 
-class AlexaOutputSpeech {
+class AlexaOutputSpeech
+{
     const TYPE_SSML = 'SSML';
     const TYPE_PLAIN_TEXT = 'PlainText';
 
@@ -14,7 +15,8 @@ class AlexaOutputSpeech {
 
     public $ssml = null;
 
-    public function render() {
+    public function render()
+    {
         return Collection::make([
             'type' => $this->type,
             'text' => $this->text,
