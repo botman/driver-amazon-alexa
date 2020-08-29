@@ -4,8 +4,8 @@ namespace Tests;
 
 use Mockery as m;
 use BotMan\BotMan\Http\Curl;
-use PHPUnit_Framework_TestCase;
 use BotMan\BotMan\Messages\Outgoing\Question;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use BotMan\BotMan\Drivers\Events\GenericEvent;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +15,7 @@ use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 use Techworker\Ssml\Element\Audio;
 use Techworker\Ssml\SsmlBuilder;
 
-class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
+class AmazonAlexaDriverTest extends TestCase
 {
     private function getDriver($responseData, $htmlInterface = null)
     {
