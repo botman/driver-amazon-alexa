@@ -115,6 +115,20 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
+    public function it_returns_the_message_object_for_launch()
+    {
+        $driver = $this->getValidDriver(null, 'LaunchRequest');
+        $this->assertTrue(is_array($driver->getMessages()));
+    }
+
+    /** @test */
+    public function it_returns_the_message_object_for_session_ended()
+    {
+        $driver = $this->getValidDriver(null, 'SessionEndedRequest');
+        $this->assertTrue(is_array($driver->getMessages()));
+    }
+
+    /** @test */
     public function it_detects_bots()
     {
         $driver = $this->getValidDriver();
