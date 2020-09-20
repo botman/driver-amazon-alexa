@@ -4,6 +4,7 @@ namespace Tests;
 
 use Mockery as m;
 use BotMan\BotMan\Http\Curl;
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_TestCase;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,9 +16,9 @@ use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 use Techworker\Ssml\Element\Audio;
 use Techworker\Ssml\SsmlBuilder;
 
-class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
+class AmazonAlexaDriverTest extends TestCase
 {
-    private function getDriver($responseData, $htmlInterface = null)
+    private function getDriver($responseData, $htmlInterface = null, $config = [])
     {
         $request = Request::create('', 'POST', [], [], [], [
             'Content-Type: application/json',
@@ -26,10 +27,10 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
             $htmlInterface = m::mock(Curl::class);
         }
 
-        return new AmazonAlexaDriver($request, [], $htmlInterface);
+        return new AmazonAlexaDriver($request, $config, $htmlInterface);
     }
 
-    private function getValidDriver($htmlInterface = null, $type = 'IntentRequest')
+    private function getValidDriver($htmlInterface = null, $type = 'IntentRequest', $config = [])
     {
         $responseData = '{
   "session": {
@@ -44,7 +45,7 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
     }
   },
   "request": {
-    "type": "'.$type.'",
+    "type": "' . $type . '",
     "requestId": "request_id",
     "intent": {
       "name": "intent_name",
@@ -68,7 +69,7 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
   "version": "1.0"
 }';
 
-        return $this->getDriver($responseData, $htmlInterface);
+        return $this->getDriver($responseData, $htmlInterface, $config);
     }
 
     /** @test */
@@ -86,6 +87,15 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
 
         $driver = $this->getValidDriver();
         $this->assertTrue($driver->matchesRequest());
+
+        $driver = $this->getValidDriver(null, 'IntentRequest', ['amazon-alexa' => ['enableValidation' => false]]);
+        $this->assertTrue($driver->matchesRequest());
+
+        $driver = $this->getValidDriver(null, 'IntentRequest', ['amazon-alexa' => ['enableValidation' => true]]);
+        $this->assertFalse($driver->matchesRequest());
+
+        $driver = $this->getValidDriver(null, 'IntentRequest', ['amazon-alexa' => ['enableValidation' => true, 'skillId' => 'app_id']]);
+        $this->assertFalse($driver->matchesRequest());
     }
 
     /** @test */
@@ -151,6 +161,15 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
     {
         $driver = $this->getValidDriver();
         $this->assertTrue($driver->isConfigured());
+
+        $driver = $driver = $this->getValidDriver(null, 'IntentRequest', ['amazon-alexa' => ['enableValidation' => false]]);
+        $this->assertTrue($driver->isConfigured());
+
+        $driver = $driver = $this->getValidDriver(null, 'IntentRequest', ['amazon-alexa' => ['enableValidation' => true]]);
+        $this->assertFalse($driver->isConfigured());
+
+        $driver = $driver = $this->getValidDriver(null, 'IntentRequest', ['amazon-alexa' => ['enableValidation' => true, 'skillId' => 'app_id']]);
+        $this->assertTrue($driver->isConfigured());
     }
 
     /** @test */
@@ -202,7 +221,8 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
 
         /** @var Response $response */
         $response = $driver->sendPayload($payload);
-        $this->assertSame('{"version":"1.0","sessionAttributes":[],"response":{"outputSpeech":{"type":"SSML","ssml":"<speak>This is SSML!<audio src=\"foo\"\/>more Text<\/speak>"},"card":null,"reprompt":null,"shouldEndSession":false}}', $response->getContent());
+        $this->assertSame('{"version":"1.0","sessionAttributes":[],"response":{"outputSpeech":{"type":"SSML","ssml":"<speak>This is SSML!<audio src=\"foo\"\/>more Text<\/speak>"},"card":null,"reprompt":null,"shouldEndSession":false}}',
+            $response->getContent());
     }
 
     /** @test */
@@ -216,7 +236,8 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
 
         /** @var Response $response */
         $response = $driver->sendPayload($payload);
-        $this->assertSame('{"version":"1.0","sessionAttributes":[],"response":{"outputSpeech":{"type":"PlainText","text":"string"},"card":null,"reprompt":null,"shouldEndSession":false}}', $response->getContent());
+        $this->assertSame('{"version":"1.0","sessionAttributes":[],"response":{"outputSpeech":{"type":"PlainText","text":"string"},"card":null,"reprompt":null,"shouldEndSession":false}}',
+            $response->getContent());
     }
 
     /** @test */
