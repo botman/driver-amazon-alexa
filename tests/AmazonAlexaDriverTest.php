@@ -2,10 +2,10 @@
 
 namespace Tests;
 
+use BotMan\Drivers\AmazonAlexa\Exceptions\AmazonValidationException;
 use Mockery as m;
 use BotMan\BotMan\Http\Curl;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_TestCase;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use Symfony\Component\HttpFoundation\Request;
 use BotMan\BotMan\Drivers\Events\GenericEvent;
@@ -92,10 +92,12 @@ class AmazonAlexaDriverTest extends TestCase
         $this->assertTrue($driver->matchesRequest());
 
         $driver = $this->getValidDriver(null, 'IntentRequest', ['amazon-alexa' => ['enableValidation' => true]]);
-        $this->assertFalse($driver->matchesRequest());
+        $this->expectException(AmazonValidationException::class);
+        $driver->matchesRequest();
 
         $driver = $this->getValidDriver(null, 'IntentRequest', ['amazon-alexa' => ['enableValidation' => true, 'skillId' => 'app_id']]);
-        $this->assertFalse($driver->matchesRequest());
+        $this->expectException(AmazonValidationException::class);
+        $driver->matchesRequest();
     }
 
     /** @test */
