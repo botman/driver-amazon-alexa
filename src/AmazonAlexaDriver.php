@@ -15,6 +15,7 @@ use BotMan\Drivers\AmazonAlexa\Extensions\Card;
 use BotMan\BotMan\Interfaces\DriverEventInterface;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
+use BotMan\Drivers\AmazonAlexa\Extensions\Directives;
 
 class AmazonAlexaDriver extends HttpDriver
 {
@@ -125,6 +126,9 @@ class AmazonAlexaDriver extends HttpDriver
             if ($attachment instanceof Card) {
                 $parameters['card'] = $attachment;
             }
+            if ($attachment instanceof Directives) {
+                $parameters['directives'] = $attachment;
+            }
         } else {
             $text = $message;
         }
@@ -147,6 +151,7 @@ class AmazonAlexaDriver extends HttpDriver
             $response->respondSsml($payload['text']);
         }
         $response->card = $payload['card'] ?? null;
+        $response->directives = $payload['directives'] ?? null;
         $response->shouldEndSession = $payload['shouldEndSession'] ?? false;
 
         return Response::create(json_encode($response->render()))->send();
