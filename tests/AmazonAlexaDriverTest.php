@@ -44,9 +44,10 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
     }
   },
   "request": {
-    "type": "'.$type.'",
-    "requestId": "request_id",
-    "intent": {
+    "type": "' . $type . '",
+    "requestId": "request_id",';
+        if ($type === 'IntentRequest') {
+            $responseData .= '"intent": {
       "name": "intent_name",
       "slots": {
         "location": {
@@ -54,7 +55,9 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
           "value": "Berlin"
         }
       }
-    },
+    },';
+        }
+        $responseData .= '
     "locale": "de-DE",
     "timestamp": "2017-09-27T20:50:37Z"
   },
@@ -109,6 +112,20 @@ class AmazonAlexaDriverTest extends PHPUnit_Framework_TestCase
     {
         $driver = $this->getValidDriver();
         $this->assertSame('intent_name', $driver->getMessages()[0]->getText());
+    }
+
+    /** @test */
+    public function it_returns_the_message_object_for_launch()
+    {
+        $driver = $this->getValidDriver(null, 'LaunchRequest');
+        $this->assertTrue(is_array($driver->getMessages()));
+    }
+
+    /** @test */
+    public function it_returns_the_message_object_for_session_ended()
+    {
+        $driver = $this->getValidDriver(null, 'SessionEndedRequest');
+        $this->assertTrue(is_array($driver->getMessages()));
     }
 
     /** @test */

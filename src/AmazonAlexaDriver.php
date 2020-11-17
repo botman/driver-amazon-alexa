@@ -69,16 +69,22 @@ class AmazonAlexaDriver extends HttpDriver
      */
     public function getMessages()
     {
-        if (empty($this->messages)) {
-            $intent = $this->event->get('intent');
-            $session = $this->payload->get('session');
+	    if (empty($this->messages)) {
+		    $type = $this->event->get('type');
+		    $intent = $this->event->get('intent');
+		    if ($type === self::LAUNCH_REQUEST || $type === self::SESSION_ENDED_REQUEST) {
+			    $name = $type;
+		    } else {
+			    $name = $intent['name'];
+		    }
+		    $session = $this->payload->get('session');
 
-            $message = new IncomingMessage($intent['name'], $session['user']['userId'], $session['sessionId'], $this->payload);
-            if (! is_null($intent) && array_key_exists('slots', $intent)) {
-                $message->addExtras('slots', Collection::make($intent['slots']));
-            }
-            $this->messages = [$message];
-        }
+		    $message = new IncomingMessage($name, $session['user']['userId'], $session['sessionId'], $this->payload);
+		    if (! is_null($intent) && array_key_exists('slots', $intent)) {
+			    $message->addExtras('slots', Collection::make($intent['slots']));
+		    }
+		    $this->messages = [$message];
+	    }
 
         return $this->messages;
     }
@@ -173,7 +179,7 @@ class AmazonAlexaDriver extends HttpDriver
         //
     }
 
-    
+
 
     public function dialogDelegate()
     {
